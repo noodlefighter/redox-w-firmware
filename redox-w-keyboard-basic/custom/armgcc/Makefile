@@ -84,7 +84,7 @@ CFLAGS += -DBOARD_CUSTOM
 CFLAGS += -DBSP_DEFINES_ONLY
 CFLAGS += -mcpu=cortex-m0
 CFLAGS += -mthumb -mabi=aapcs --std=gnu99
-CFLAGS += -Wall -Werror -O3 -g3
+CFLAGS += -Wall -Werror -O0 -g3
 CFLAGS += -Wno-unused-function
 CFLAGS += -Wno-unused-variable
 CFLAGS += -mfloat-abi=soft
@@ -122,13 +122,27 @@ help:
 	@echo following targets are available:
 	@echo 	nrf51822_xxac
 
-C_SOURCE_FILE_NAMES = $(notdir $(C_SOURCE_FILES))
-C_PATHS = $(call remduplicates, $(dir $(C_SOURCE_FILES) ) )
-C_OBJECTS = $(addprefix $(OBJECT_DIRECTORY)/, $(C_SOURCE_FILE_NAMES:.c=.o) )
 
-ASM_SOURCE_FILE_NAMES = $(notdir $(ASM_SOURCE_FILES))
-ASM_PATHS = $(call remduplicates, $(dir $(ASM_SOURCE_FILES) ))
-ASM_OBJECTS = $(addprefix $(OBJECT_DIRECTORY)/, $(ASM_SOURCE_FILE_NAMES:.s=.o) )
+#log
+#ifeq ($(DEBUG), y)
+$(warning ">>> debug mode!!!\n")
+INC_PATHS  += -I$(abspath ../../../log)
+#ASM_SOURCE_FILES  += $(abspath ../../../../log/SEGGER_RTT_ASM_ARMv7M.S)
+#VPATH += ../../../../log
+#C_SOURCE_FILE_NAMES += $(wildcard ../../../../log/*.c)
+C_SOURCE_FILE_NAMES += ../../../../log/log_rtt.c \
+	../../../../log/SEGGER_RTT_printf.c \
+	../../../../log/SEGGER_RTT.c
+	
+#endif
+
+C_SOURCE_FILE_NAMES += $(notdir $(C_SOURCE_FILES))
+C_PATHS += $(call remduplicates, $(dir $(C_SOURCE_FILES) ) )
+C_OBJECTS += $(addprefix $(OBJECT_DIRECTORY)/, $(C_SOURCE_FILE_NAMES:.c=.o) )
+
+ASM_SOURCE_FILE_NAMES += $(notdir $(ASM_SOURCE_FILES))
+ASM_PATHS += $(call remduplicates, $(dir $(ASM_SOURCE_FILES) ))
+ASM_OBJECTS += $(addprefix $(OBJECT_DIRECTORY)/, $(ASM_SOURCE_FILE_NAMES:.s=.o) )
 
 vpath %.c $(C_PATHS)
 vpath %.s $(ASM_PATHS)

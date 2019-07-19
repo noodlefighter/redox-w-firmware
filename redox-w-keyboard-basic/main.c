@@ -10,6 +10,8 @@
 #include "nrf_drv_clock.h"
 #include "nrf_drv_rtc.h"
 
+#include "log.h"
+#include "SEGGER_RTT.h"
 
 /*****************************************************************************/
 /** Configuration */
@@ -65,6 +67,14 @@ static void read_keys(void)
     uint32_t input = 0;
     uint8_t row_stat[5] = {0, 0, 0, 0, 0};
 
+    nrf_gpio_pin_clear(C01);
+    nrf_gpio_pin_clear(C02);
+    nrf_gpio_pin_clear(C03);
+    nrf_gpio_pin_clear(C04);
+    nrf_gpio_pin_clear(C05);
+    nrf_gpio_pin_clear(C06);
+    nrf_gpio_pin_clear(C07);
+
     // scan matrix by columns
     for (c = 0; c < COLUMNS; ++c) {
         nrf_gpio_pin_set(COL_PINS[c]);
@@ -82,6 +92,14 @@ static void read_keys(void)
     keys_buffer[2] = row_stat[2] << REMAINING_POSITIONS;
     keys_buffer[3] = row_stat[3] << REMAINING_POSITIONS;
     keys_buffer[4] = row_stat[4] << REMAINING_POSITIONS;
+
+//    static int a = 0;
+//    if (++a >= 1000) {
+//        SEGGER_RTT_printf(0, "%04x %04x %04x %04x %04x\n",
+//                (int)keys_buffer[0],(int)keys_buffer[1],(int)keys_buffer[2],
+//                (int)keys_buffer[3],(int)keys_buffer[4]);
+//        a = 0;
+//    }
 
     return;
 }
@@ -184,6 +202,8 @@ static void handler_debounce(nrf_drv_rtc_int_type_t int_type)
             nrf_gpio_pin_set(C05);
             nrf_gpio_pin_set(C06);
             nrf_gpio_pin_set(C07);
+
+            NVIC_EnableIRQ(GPIOTE_IRQn);
         }
 
     }
@@ -246,7 +266,6 @@ int main()
     NRF_GPIOTE->INTENSET = GPIOTE_INTENSET_PORT_Msk;
     NVIC_EnableIRQ(GPIOTE_IRQn);
 
-
     // Main loop, constantly sleep, waiting for RTC and gpio IRQs
     while(1)
     {
@@ -264,6 +283,8 @@ void GPIOTE_IRQHandler(void)
         //clear wakeup event
         NRF_GPIOTE->EVENTS_PORT = 0;
 
+        SEGGER_RTT_printf(0, "GPIOTE!\n");
+
         //enable rtc interupt triggers
         nrf_drv_rtc_enable(&rtc_maint);
         nrf_drv_rtc_enable(&rtc_deb);
@@ -280,6 +301,8 @@ void GPIOTE_IRQHandler(void)
         //debouncing = false;
         //debounce_ticks = 0;
         activity_ticks = 0;
+
+        NVIC_DisableIRQ(GPIOTE_IRQn);
     }
 }
 

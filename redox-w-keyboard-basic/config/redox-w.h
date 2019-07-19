@@ -8,33 +8,33 @@
 
 // left hand pins
 
-#define L_C01 10
-#define L_C02 9
-#define L_C03 7
-#define L_C04 6
-#define L_C05 5
-#define L_C06 4
-#define L_C07 3
-#define L_R01 19
-#define L_R02 18
-#define L_R03 17
-#define L_R04 14
-#define L_R05 13
+#define L_C01 3
+#define L_C02 2
+#define L_C03 1
+#define L_C04 0
+#define L_C05 24
+#define L_C06 23
+#define L_C07 22
+#define L_R01 18
+#define L_R02 16
+#define L_R03 15
+#define L_R04 12
+#define L_R05 8
 
 // right hand pins
 
-#define R_C01 6
-#define R_C02 5
-#define R_C03 4
-#define R_C04 3
-#define R_C05 2
-#define R_C06 0
-#define R_C07 30
-#define R_R01 21
-#define R_R02 22
-#define R_R03 23
-#define R_R04 28
-#define R_R05 29
+#define R_C01 18
+#define R_C02 16
+#define R_C03 15
+#define R_C04 12
+#define R_C05 8
+#define R_C06 4
+#define R_C07 3
+#define R_R01 22
+#define R_R02 23
+#define R_R03 24
+#define R_R04 0
+#define R_R05 1
 
 #ifdef COMPILE_LEFT
 
